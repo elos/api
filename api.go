@@ -50,5 +50,8 @@ func (api *API) Start() {
 }
 
 func (api *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if !api.Life.Alive() {
+		go api.Start()
+	}
 	api.router.ServeHTTP(w, r)
 }
