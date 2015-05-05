@@ -1,44 +1,31 @@
 package api
 
 import (
-	"net/http"
+	"encoding/json"
 
+	"github.com/elos/api/hermes"
+	"github.com/elos/autonomous"
 	"github.com/elos/data"
-	"github.com/elos/ehttp/handles"
-	"github.com/elos/transfer"
-	"github.com/julienschmidt/httprouter"
+	"github.com/elos/data/transfer"
+	"github.com/elos/ehttp/serve"
+	"github.com/elos/ehttp/sock"
 )
 
-type ParamsList []string
-
-func Params(v ...string) ParamsList {
-	return ParamsList(v)
-}
-
-func Post(k data.Kind, params ParamsList) handles.AccessHandle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, access data.Access) {
-		attrs := make(data.AttrMap)
-
-		for _, k := range params {
-			attrs[k] = r.FormValue(k)
+func Serve(a transfer.Action, k data.Kind, db data.DB) serve.Route {
+	return func(c *serve.Conn) {
+		r := c.Request()
+		decoder := json.NewDecoder(r.Body)
+		data := make(map[data.Kind]data.AttrMap)
+		err := decoder.Decode(&data)
+		if err != nil {
+			panic("hmm")
 		}
-
-		c := transfer.NewHTTPConnection(w, r, access)
-		e := transfer.New(c, transfer.POST, k, attrs)
-		go transfer.Route(e, access)
+		e := transfer.NewEnvelope(c, a, data)
+		hermes.Serve(e, db)
 	}
 }
 
-func Get(k data.Kind, params ParamsList) handles.AccessHandle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params, access data.Access) {
-		attrs := make(data.AttrMap)
-
-		for _, k := range params {
-			attrs[k] = r.FormValue(k)
-		}
-
-		c := transfer.NewHTTPConnection(w, r, access)
-		e := transfer.New(c, transfer.GET, k, attrs)
-		go transfer.Route(e, access)
+func WebSocket(u sock.Upgrader, man autonomous.Manager) serve.Route {
+	return func(c *serve.Conn) {
 	}
 }

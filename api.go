@@ -3,10 +3,7 @@ package api
 import (
 	"github.com/elos/autonomous"
 	"github.com/elos/data"
-	"github.com/elos/ehttp"
-	"github.com/elos/ehttp/handles"
-	"github.com/elos/models"
-	"github.com/elos/transfer"
+	"github.com/elos/ehttp/serve"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -14,73 +11,61 @@ type API struct {
 	autonomous.Life
 	autonomous.Stopper
 
-	*ehttp.Server
-	*autonomous.Hub
+	server  *serve.Server
+	sockets *autonomous.Hub
 }
 
-func New(host string, port int, store data.Store) *API {
+func New(host string, port int, db data.DB) *API {
 	hub := autonomous.NewHub()
-	server := ehttp.NewServer(host, port, newRouter(hub, store), store)
+	server := serve.New(&serve.Opts{
+		Handler: router(hub, db),
+	})
 
 	return &API{
-		Hub:    hub,
-		Server: server,
-
 		Life:    autonomous.NewLife(),
 		Stopper: make(autonomous.Stopper),
+
+		server:  server,
+		sockets: hub,
 	}
 }
 
 func (api *API) Start() {
-	go api.Server.Start()
-	go api.Hub.Start()
-
+	go api.sockets.Start()
+	go api.server.Start()
 	api.Life.Begin()
 
 	serverstop := make(autonomous.Stopper)
 	hubstop := make(autonomous.Stopper)
 
 	go func() {
-		api.Server.WaitStop()
+		api.server.WaitStop()
 		go serverstop.Stop()
 	}()
 
 	go func() {
-		api.Hub.WaitStop()
+		api.sockets.WaitStop()
 		go hubstop.Stop()
 	}()
 
 	select {
 	case <-serverstop:
-		go api.Hub.Stop()
-		api.Hub.WaitStop()
+		go api.sockets.Stop()
+		api.sockets.WaitStop()
 	case <-hubstop:
-		go api.Server.Stop()
-		api.Server.WaitStop()
+		go api.server.Stop()
+		api.server.WaitStop()
 	case <-api.Stopper:
-		go api.Hub.Stop()
-		api.Hub.WaitStop()
-		go api.Server.Stop()
-		api.Server.WaitStop()
+		go api.sockets.Stop()
+		api.sockets.WaitStop()
+		go api.server.Stop()
+		api.server.WaitStop()
 	}
 
 	api.Life.End()
 }
 
-func newRouter(hub *autonomous.Hub, store data.Store) *httprouter.Router {
+func router(hub *autonomous.Hub, db data.DB) *httprouter.Router {
 	r := httprouter.New()
-
-	r.POST("/v1/users/",
-		handles.Access(Post(models.UserKind, Params("name")), data.NewAnonAccess(store)))
-
-	r.POST("/v1/events/",
-		handles.Auth(Post(models.EventKind, Params("name")), transfer.Auth(transfer.HTTPCredentialer), store))
-
-	r.GET("/v1/authenticate",
-		handles.Auth(WebSocket(transfer.DefaultUpgrader, hub), transfer.Auth(transfer.SocketCredentialer), store))
-
-	r.GET("/v1/repl",
-		handles.Auth(REPL(transfer.DefaultUpgrader, hub), transfer.Auth(transfer.SocketCredentialer), store))
-
 	return r
 }
