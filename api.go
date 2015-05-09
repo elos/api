@@ -13,16 +13,16 @@ type API struct {
 	autonomous.Life
 	autonomous.Stopper
 
-	sockets *autonomous.Hub
+	sockets autonomous.Manager
 	db      data.DB
 	router  serve.Router
 }
 
-func New(hub *autonomous.Hub, db data.DB) *API {
+func New(db data.DB, man autonomous.Manager) *API {
 	return &API{
 		Life:    autonomous.NewLife(),
 		Stopper: make(autonomous.Stopper),
-		sockets: hub,
+		sockets: man,
 		db:      db,
 		router:  builtin.NewRouter(),
 	}
