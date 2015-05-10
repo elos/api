@@ -20,7 +20,8 @@ func (e *Error) Error() string {
 }
 
 var (
-	ErrGeneric      = &Error{400, 400, "this is the generic error", "complain to nick about returning the generic error"}
-	ErrNotFound     = &Error{400, 400, "data not found", "perhaps you have an incorrect id?"}
-	ErrUnauthorized = &Error{401, 401, "unauthorized", "hit /authenticate first"}
+	ErrGeneric       = &Error{400, 400, "this is the generic error", "complain to nick about returning the generic error"}
+	ErrNotFound      = &Error{400, 400, "data not found", "perhaps you have an incorrect id?"}
+	ErrUnauthorized  = &Error{401, 401, "unauthorized", "hit /authenticate first"}
+	ErrMalformedData = &Error{400, 400, "malformed data", "json only supported"}
 )

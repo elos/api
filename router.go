@@ -12,7 +12,7 @@ import (
 // TO REGENERATE BASED ON NEW DEFINITIONS
 // cd gen/ && go run gen.go
 
-func router(sockets autonomous.Manager, db data.DB) serve.Router {
+func router(db data.DB, sockets autonomous.Manager) serve.Router {
 	r := builtin.NewRouter()
 
 	r.GET("/action", Serve(hermes.GET, "action", db))

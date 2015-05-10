@@ -18,7 +18,8 @@ func Serve(a transfer.Action, k data.Kind, db data.DB) serve.Route {
 		data := make(map[data.Kind]data.AttrMap)
 		err := decoder.Decode(&data)
 		if err != nil {
-			panic("hmm")
+			c.WriteJSON(hermes.ErrMalformedData)
+			return
 		}
 		e := transfer.NewEnvelope(c, a, data)
 		hermes.Serve(e, db)
