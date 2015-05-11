@@ -5,12 +5,12 @@ package api
 // TO REGENERATE BASED ON NEW DEFINITIONS
 // cd gen/ && go run gen.go
 
-func router(sockets autonomous.Manager, db data.DB) serve.Router {
+func router(db data.DB, sockets autonomous.Manager) serve.Router {
     r := builtin.NewRouter()
     {{range $key, $model := .Models}}
-        r.GET("/{{$model.Kind}}", Serve(hermes.GET, "{{$model.Kind}}", db))
-        r.POST("/{{$model.Kind}}", Serve(hermes.POST, "{{$model.Kind}}", db))
-        r.DELETE("/{{$model.Kind}}", Serve(hermes.DELETE, "{{$model.Kind}}", db))
+        r.GET("/{{$model.Space}}", Serve(hermes.GET, "{{$model.Kind}}", db))
+        r.POST("/{{$model.Space}}", Serve(hermes.POST, "{{$model.Kind}}", db))
+        r.DELETE("/{{$model.Space}}", Serve(hermes.DELETE, "{{$model.Kind}}", db))
     {{end}}
     return r
 }
