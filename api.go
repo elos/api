@@ -3,25 +3,39 @@ package api
 import (
 	"net/http"
 
-	"github.com/elos/autonomous"
-	"github.com/elos/data"
+	"github.com/elos/app/services"
 	"github.com/elos/ehttp/serve"
+	"github.com/gorilla/context"
 )
 
-type API struct {
-	sockets autonomous.Manager
-	db      data.DB
-	router  serve.Router
+type Middleware struct {
+	Log serve.Middleware
+
+	SessionAuth serve.Middleware
 }
 
-func New(db data.DB, man autonomous.Manager) *API {
-	return &API{
-		sockets: man,
-		db:      db,
-		router:  router(db, man),
+type Services struct {
+	services.Agents
+
+	services.DB
+}
+
+type Api struct {
+	router serve.Router
+	*Middleware
+	*Services
+}
+
+func New(m *Middleware, s *Services) *Api {
+	router := router(m, s)
+
+	return &Api{
+		router:     router,
+		Middleware: m,
+		Services:   s,
 	}
 }
 
-func (api *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	api.router.ServeHTTP(w, r)
+func (api *Api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	context.ClearHandler(http.HandlerFunc(api.router.ServeHTTP)).ServeHTTP(w, r)
 }

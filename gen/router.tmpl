@@ -12,6 +12,8 @@ func router(db data.DB, sockets autonomous.Manager) serve.Router {
         r.POST("/{{$model.Space}}", Serve(hermes.POST, "{{$model.Kind}}", db))
         r.DELETE("/{{$model.Space}}", Serve(hermes.DELETE, "{{$model.Kind}}", db))
     {{end}}
+
+    r.GET("/hermes", HermesSocket(sockets))
     return r
 }
 {{end}}

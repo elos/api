@@ -1,79 +1,1049 @@
 package api
 
 import (
-	"github.com/elos/api/hermes"
-	"github.com/elos/autonomous"
-	"github.com/elos/data"
+	"path/filepath"
+	"runtime"
+
+	"github.com/elos/app/routes"
 	"github.com/elos/ehttp/builtin"
 	"github.com/elos/ehttp/serve"
 )
 
-// THIS FILE GENERATED USING METIS
-// TO REGENERATE BASED ON NEW DEFINITIONS
-// cd gen/ && go run gen.go
+var root string
 
-func router(db data.DB, sockets autonomous.Manager) serve.Router {
-	r := builtin.NewRouter()
+func init() {
+	_, filename, _, _ := runtime.Caller(1)
+	root = filepath.Dir(filename)
+}
 
-	r.GET("/actions", Serve(hermes.GET, "action", db))
-	r.POST("/actions", Serve(hermes.POST, "action", db))
-	r.DELETE("/actions", Serve(hermes.DELETE, "action", db))
+func router(m *Middleware, s *Services) serve.Router {
+	router := builtin.NewRouter()
 
-	r.GET("/attributes", Serve(hermes.GET, "attribute", db))
-	r.POST("/attributes", Serve(hermes.POST, "attribute", db))
-	r.DELETE("/attributes", Serve(hermes.DELETE, "attribute", db))
+	router.GET(routes.Sessions, func(c *serve.Conn) {
 
-	r.GET("/calendars", Serve(hermes.GET, "calendar", db))
-	r.POST("/calendars", Serve(hermes.POST, "calendar", db))
-	r.DELETE("/calendars", Serve(hermes.DELETE, "calendar", db))
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
 
-	r.GET("/classes", Serve(hermes.GET, "class", db))
-	r.POST("/classes", Serve(hermes.POST, "class", db))
-	r.DELETE("/classes", Serve(hermes.DELETE, "class", db))
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
 
-	r.GET("/events", Serve(hermes.GET, "event", db))
-	r.POST("/events", Serve(hermes.POST, "event", db))
-	r.DELETE("/events", Serve(hermes.DELETE, "event", db))
+		routes.SessionsGET(c, s.DB)
 
-	r.GET("/fixtures", Serve(hermes.GET, "fixture", db))
-	r.POST("/fixtures", Serve(hermes.POST, "fixture", db))
-	r.DELETE("/fixtures", Serve(hermes.DELETE, "fixture", db))
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
 
-	r.GET("/links", Serve(hermes.GET, "link", db))
-	r.POST("/links", Serve(hermes.POST, "link", db))
-	r.DELETE("/links", Serve(hermes.DELETE, "link", db))
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
 
-	r.GET("/objects", Serve(hermes.GET, "object", db))
-	r.POST("/objects", Serve(hermes.POST, "object", db))
-	r.DELETE("/objects", Serve(hermes.DELETE, "object", db))
+	})
 
-	r.GET("/ontologies", Serve(hermes.GET, "ontology", db))
-	r.POST("/ontologies", Serve(hermes.POST, "ontology", db))
-	r.DELETE("/ontologies", Serve(hermes.DELETE, "ontology", db))
+	router.POST(routes.Sessions, func(c *serve.Conn) {
 
-	r.GET("/relations", Serve(hermes.GET, "relation", db))
-	r.POST("/relations", Serve(hermes.POST, "relation", db))
-	r.DELETE("/relations", Serve(hermes.DELETE, "relation", db))
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
 
-	r.GET("/routines", Serve(hermes.GET, "routine", db))
-	r.POST("/routines", Serve(hermes.POST, "routine", db))
-	r.DELETE("/routines", Serve(hermes.DELETE, "routine", db))
+		routes.SessionsPOST(c, s.DB)
 
-	r.GET("/schedules", Serve(hermes.GET, "schedule", db))
-	r.POST("/schedules", Serve(hermes.POST, "schedule", db))
-	r.DELETE("/schedules", Serve(hermes.DELETE, "schedule", db))
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
 
-	r.GET("/tasks", Serve(hermes.GET, "task", db))
-	r.POST("/tasks", Serve(hermes.POST, "task", db))
-	r.DELETE("/tasks", Serve(hermes.DELETE, "task", db))
+	})
 
-	r.GET("/traits", Serve(hermes.GET, "trait", db))
-	r.POST("/traits", Serve(hermes.POST, "trait", db))
-	r.DELETE("/traits", Serve(hermes.DELETE, "trait", db))
+	router.GET(routes.Actions, func(c *serve.Conn) {
 
-	r.GET("/users", Serve(hermes.GET, "user", db))
-	r.POST("/users", Serve(hermes.POST, "user", db))
-	r.DELETE("/users", Serve(hermes.DELETE, "user", db))
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
 
-	return r
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.ActionsGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Actions, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.ActionsPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Actions, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.ActionsDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Attributes, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.AttributesGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Attributes, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.AttributesPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Attributes, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.AttributesDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Calendars, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.CalendarsGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Calendars, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.CalendarsPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Calendars, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.CalendarsDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Classes, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.ClassesGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Classes, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.ClassesPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Classes, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.ClassesDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Events, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.EventsGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Events, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.EventsPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Events, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.EventsDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Fixtures, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.FixturesGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Fixtures, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.FixturesPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Fixtures, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.FixturesDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Links, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.LinksGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Links, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.LinksPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Links, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.LinksDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Objects, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.ObjectsGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Objects, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.ObjectsPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Objects, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.ObjectsDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Ontologies, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.OntologiesGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Ontologies, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.OntologiesPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Ontologies, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.OntologiesDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Relations, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.RelationsGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Relations, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.RelationsPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Relations, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.RelationsDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Routines, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.RoutinesGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Routines, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.RoutinesPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Routines, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.RoutinesDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Schedules, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.SchedulesGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Schedules, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.SchedulesPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Schedules, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.SchedulesDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Tasks, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.TasksGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Tasks, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.TasksPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Tasks, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.TasksDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Traits, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.TraitsGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Traits, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.TraitsPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Traits, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.TraitsDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Users, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.UsersGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Users, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.UsersPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Users, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.UsersDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	return router
 }

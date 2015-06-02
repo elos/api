@@ -1,7 +1,8 @@
-package api
+package routes
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/elos/api/hermes"
 	"github.com/elos/autonomous"
@@ -10,6 +11,22 @@ import (
 	"github.com/elos/ehttp/serve"
 	"github.com/elos/ehttp/sock"
 )
+
+func Unauthorized(c *serve.Conn) {
+	c.Error(403, 4030, "Unauthorized", "Make sure you are providing your access token")
+}
+
+func RecordNotFound(c *serve.Conn) {
+	c.Error(404, 4040, "Not Found", "Make sure you have a valid id")
+}
+
+func ServerError(c *serve.Conn, err error) {
+	c.Error(500, 5000, "Server Error", err.Error())
+}
+
+func BadParam(c *serve.Conn, param string) {
+	c.Error(400, 4000, "Bad param", fmt.Sprintf("Bad parameter: %s", param))
+}
 
 func Serve(a transfer.Action, k data.Kind, db data.DB) serve.Route {
 	return func(c *serve.Conn) {
