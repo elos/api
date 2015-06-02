@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/elos/app/services"
+	"github.com/elos/api/services"
 	"github.com/elos/ehttp/serve"
 	"github.com/gorilla/context"
 )

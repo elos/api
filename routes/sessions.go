@@ -70,13 +70,15 @@ func SessionsPOST(c *serve.Conn, db services.DB) {
 		case *ehttp.MissingParamError:
 			if string(*err.(*ehttp.MissingParamError)) == "id" {
 				BadParam(c, "id")
+				return
 			} else {
 				BadParam(c, "key")
+				return
 			}
 
 			ServerError(c, err)
+			return
 		}
-		return
 	}
 	// --- }}}
 
@@ -85,15 +87,15 @@ func SessionsPOST(c *serve.Conn, db services.DB) {
 	if err != nil {
 		if err.Error() == "invalid key" {
 			Unauthorized(c)
+			return
 		}
 
-		switch err.(type) {
-		case data.ErrNotFound:
+		if err == data.ErrNotFound {
 			RecordNotFound(c)
-		default:
-			ServerError(c, err)
+			return
 		}
 
+		ServerError(c, err)
 		return
 	}
 	// --- }}}
@@ -112,7 +114,7 @@ func SessionsPOST(c *serve.Conn, db services.DB) {
 	)
 }
 
-func SessionsDELETE(c *serve.Conn) {
+func SessionsDELETE(c *serve.Conn, db services.DB) {
 	// --- Retrieve the User {{{
 	v, ok := c.Context(middleware.UserArtifact)
 	if !ok {
@@ -157,7 +159,7 @@ func SessionsDELETE(c *serve.Conn) {
 
 	// --- Delete it {{{
 	if err := db.Delete(session); err != nil {
-		ServerError(err)
+		ServerError(c, err)
 		return
 	}
 	// --- }}}

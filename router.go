@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/elos/app/routes"
+	"github.com/elos/api/routes"
 	"github.com/elos/ehttp/builtin"
 	"github.com/elos/ehttp/serve"
 )
