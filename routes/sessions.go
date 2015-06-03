@@ -50,7 +50,7 @@ func SessionsGET(c *serve.Conn, db services.DB) {
 		return
 	}
 
-	if id.String() != user.ID().String() {
+	if session.UserID != user.ID().String() {
 		Unauthorized(c)
 		return
 	}
