@@ -2,42 +2,25 @@ package routes
 
 import (
 	"encoding/json"
-	"errors"
 
-	"github.com/elos/app/middleware"
-	"github.com/elos/app/services"
+	"github.com/elos/api/middleware"
+	"github.com/elos/api/services"
 	"github.com/elos/data/transfer"
 	"github.com/elos/ehttp/serve"
 	"github.com/elos/models"
 )
 
 func AttributesGET(c *serve.Conn, db services.DB) {
-	// --- Retrieve the User {{{
-	v, ok := c.Context(middleware.UserArtifact)
+	user, ok := middleware.RetrieveUser(c, ServerError)
 	if !ok {
-		ServerError(c, errors.New("User Artifact Missing"))
-		return
-	}
-	user, ok := v.(*models.User)
-	if !ok {
-		ServerError(c, errors.New("User Cast Failed"))
-		return
-	}
-	// --- }}}
-
-	// --- Retrieve the ID {{{
-	stringID := c.ParamVal("attribute_id")
-	if stringID == "" {
-		BadParam(c, "attribute_id")
 		return
 	}
 
-	id, err := db.ParseID(stringID)
+	id, err := db.ParseID(c.ParamVal("attribute_id"))
 	if err != nil {
 		BadParam(c, "attribute_id")
 		return
 	}
-	// --- }}}
 
 	// --- Find the Attribute {{{
 	attribute := models.NewAttribute()
@@ -61,18 +44,10 @@ func AttributesGET(c *serve.Conn, db services.DB) {
 }
 
 func AttributesPOST(c *serve.Conn, db services.DB) {
-	// --- Retrieve the User {{{
-	v, ok := c.Context(middleware.UserArtifact)
+	user, ok := middleware.RetrieveUser(c, ServerError)
 	if !ok {
-		ServerError(c, errors.New("User Artifact Missing"))
 		return
 	}
-	user, ok := v.(*models.User)
-	if !ok {
-		ServerError(c, errors.New("User Cast Failed"))
-		return
-	}
-	// --- }}}
 
 	// --- Decode the request body {{{
 	decoder := json.NewDecoder(c.Request().Body)
@@ -116,18 +91,10 @@ func AttributesPOST(c *serve.Conn, db services.DB) {
 }
 
 func AttributesDELETE(c *serve.Conn, db services.DB) {
-	// --- Retrieve the User {{{
-	v, ok := c.Context(middleware.UserArtifact)
+	user, ok := middleware.RetrieveUser(c, ServerError)
 	if !ok {
-		ServerError(c, errors.New("User Artifact Missing"))
 		return
 	}
-	user, ok := v.(*models.User)
-	if !ok {
-		ServerError(c, errors.New("User Cast Failed"))
-		return
-	}
-	// --- }}}
 
 	// --- Retrieve the ID {{{
 	stringID := c.ParamVal("attribute_id")
