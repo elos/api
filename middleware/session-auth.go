@@ -3,19 +3,56 @@ package middleware
 import (
 	"errors"
 
+	"github.com/elos/api/services"
 	"github.com/elos/ehttp/serve"
 	"github.com/elos/models"
 )
 
-const UserArtifact = "session-user"
+const (
+	AuthHeader   = "Elos-Auth"
+	UserArtifact = "session-user"
+)
 
-type SessionAuth struct{}
+type SessionAuth struct {
+	db                  services.DB
+	unauthorizedHandler serve.Route
+}
 
 func (sa *SessionAuth) Inbound(c *serve.Conn) bool {
+	header := c.Request().Header
+	auth, ok := header[AuthHeader]
+	if !ok {
+		sa.unauthorizedHandler(c)
+		return false
+	}
+
+	// be very strict about information provided
+	if len(auth) != 1 {
+		sa.unauthorizedHandler(c)
+		return false
+	}
+
+	token := auth[0]
+
+	session, err := models.SessionForToken(sa.db, token)
+	if err != nil {
+		sa.unauthorizedHandler(c)
+		return false
+	}
+
+	user, err := session.Owner(sa.db)
+	if err != nil {
+		sa.unauthorizedHandler(c)
+		return false
+	}
+
+	c.AddContext(UserArtifact, user)
+
 	return true
 }
 
 func (sa *SessionAuth) Outbound(c *serve.Conn) bool {
+	// nothing to do
 	return true
 }
 
