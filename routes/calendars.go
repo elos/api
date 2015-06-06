@@ -29,7 +29,7 @@ func CalendarsGET(c *serve.Conn, db services.DB) {
 		return
 	}
 
-	if calendar.UserID != user.ID().String() {
+	if calendar.OwnerID != user.ID().String() {
 		Unauthorized(c)
 		return
 	}

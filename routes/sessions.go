@@ -1,60 +1,49 @@
 package routes
 
 import (
-	"errors"
+	"time"
 
-	"github.com/elos/app/middleware"
-	"github.com/elos/app/services"
-	"github.com/elos/data"
+	"github.com/elos/api/middleware"
+	"github.com/elos/api/services"
 	"github.com/elos/data/transfer"
 	"github.com/elos/ehttp"
 	"github.com/elos/ehttp/serve"
 	"github.com/elos/models"
-	"github.com/elos/models/user"
 )
 
-func SessionsGET(c *serve.Conn, db services.DB) {
-	// --- Retrieve the User {{{
-	v, ok := c.Context(middleware.UserArtifact)
-	if !ok {
-		ServerError(c, errors.New("User Artifact Missing"))
-		return
-	}
-	user, ok := v.(*models.User)
-	if !ok {
-		ServerError(c, errors.New("User Cast Failed"))
-		return
-	}
-	// --- }}}
+const SessionIDParam = "session_id"
 
-	// --- Retrieve the ID {{{
-	stringID := c.ParamVal("session_id")
-	if stringID == "" {
-		BadParam(c, "session_id")
-		return
+func retrieveSession(c *serve.Conn, db services.DB) (*models.Session, bool) {
+	id, ok := retrieveIDParam(SessionIDParam, c, db)
+	if !ok {
+		return nil, false
 	}
 
-	id, err := db.ParseID(stringID)
+	session, err := models.FindSession(db, *id)
 	if err != nil {
-		BadParam(c, "session_id")
-		return
-	}
-	// --- }}}
-
-	// --- Find the Session {{{
-	session := models.NewSession()
-	session.SetID(id)
-
-	if err := db.PopulateByID(session); err != nil {
 		ServerError(c, err)
+		return nil, false
+	}
+
+	return session, true
+}
+
+// --- SessionsGET {{{
+
+func SessionsGET(c *serve.Conn, db services.DB) {
+	user, ok := middleware.RetrieveUser(c, ServerError)
+	if !ok {
 		return
 	}
 
-	if session.UserID != user.ID().String() {
-		Unauthorized(c)
+	session, ok := retrieveSession(c, db)
+	if !ok {
 		return
 	}
-	// }}}
+
+	if !checkReadAccess(user, session, c, db) {
+		return
+	}
 
 	c.Response(
 		200,
@@ -62,17 +51,32 @@ func SessionsGET(c *serve.Conn, db services.DB) {
 	)
 }
 
+// --- }}}
+
+// --- SessionsPOST {{{
 func SessionsPOST(c *serve.Conn, db services.DB) {
-	// --- Retrieve Credentials {{{
-	credentials, err := c.ParamVals("id", "key")
+	id, err := db.ParseID(c.ParamVal("user_id"))
+	if err != nil {
+		BadParam(c, "user_id")
+		return
+	}
+
+	user := models.NewUser()
+	user.SetID(id)
+	if err := db.PopulateByID(user); err != nil {
+		RecordNotFound(c)
+		return
+	}
+
+	credentials, err := c.ParamVals("public", "private")
 	if err != nil {
 		switch err.(type) {
 		case *ehttp.MissingParamError:
-			if string(*err.(*ehttp.MissingParamError)) == "id" {
-				BadParam(c, "id")
+			if string(*err.(*ehttp.MissingParamError)) == "public" {
+				BadParam(c, "public")
 				return
 			} else {
-				BadParam(c, "key")
+				BadParam(c, "private")
 				return
 			}
 
@@ -80,33 +84,17 @@ func SessionsPOST(c *serve.Conn, db services.DB) {
 			return
 		}
 	}
-	// --- }}}
 
-	// --- Authenticate the user {{{
-	u, err := user.Authenticate(db, credentials["id"], credentials["key"])
+	credential, err := user.Authenticate(db, credentials["public"], credentials["private"])
 	if err != nil {
-		if err.Error() == "invalid key" {
-			Unauthorized(c)
-			return
-		}
-
-		if err == data.ErrNotFound {
-			RecordNotFound(c)
-			return
-		}
-
-		ServerError(c, err)
+		Unauthorized(c)
 		return
 	}
-	// --- }}}
 
-	// --- Create the session {{{
-	session := models.NewSessionForUser(u)
-	if err := db.Save(session); err != nil {
+	session, err := credential.NewSession(db, 3600*time.Second)
+	if err != nil {
 		ServerError(c, err)
-		return
 	}
-	// --- }}}
 
 	c.Response(
 		200,
@@ -114,58 +102,34 @@ func SessionsPOST(c *serve.Conn, db services.DB) {
 	)
 }
 
+// --- }}}
+
+// --- SessionsDELETE {{{
+
 func SessionsDELETE(c *serve.Conn, db services.DB) {
-	// --- Retrieve the User {{{
-	v, ok := c.Context(middleware.UserArtifact)
+	user, ok := middleware.RetrieveUser(c, ServerError)
 	if !ok {
-		ServerError(c, errors.New("User Artifact Missing"))
 		return
 	}
-	user, ok := v.(*models.User)
+
+	session, ok := retrieveSession(c, db)
 	if !ok {
-		ServerError(c, errors.New("User Cast Failed"))
-		return
-	}
-	// --- }}}
-
-	// --- Retrieve the ID {{{
-	stringID := c.ParamVal("session_id")
-	if stringID == "" {
-		BadParam(c, "session_id")
 		return
 	}
 
-	id, err := db.ParseID(stringID)
-	if err != nil {
-		BadParam(c, "session_id")
-		return
-	}
-	// --- }}}
-
-	// --- Find the Session {{{
-	session := models.NewSession()
-	session.SetID(id)
-
-	if err := db.PopulateByID(session); err != nil {
-		ServerError(c, err)
+	if !checkWriteAccess(user, session, c, db) {
 		return
 	}
 
-	if id.String() != user.ID().String() {
-		Unauthorized(c)
-		return
-	}
-	// }}}
-
-	// --- Delete it {{{
 	if err := db.Delete(session); err != nil {
 		ServerError(c, err)
 		return
 	}
-	// --- }}}
 
 	c.Response(
 		200,
 		nil,
 	)
 }
+
+// --- }}}

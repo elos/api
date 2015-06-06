@@ -10,38 +10,49 @@ import (
 	"github.com/elos/models"
 )
 
+const AttributeIDParam = "attribute_id"
+
+func retrieveAttribute(c *serve.Conn, db services.DB) (*models.Attribute, bool) {
+	id, ok := retrieveIDParam(AttributeIDParam, c, db)
+	if !ok {
+		return nil, false
+	}
+
+	attribute, err := models.FindAttribute(db, *id)
+	if err != nil {
+		ServerError(c, err)
+		return nil, false
+	}
+
+	return attribute, true
+}
+
+// --- AttributesGET {{{
+
 func AttributesGET(c *serve.Conn, db services.DB) {
 	user, ok := middleware.RetrieveUser(c, ServerError)
 	if !ok {
 		return
 	}
 
-	id, err := db.ParseID(c.ParamVal("attribute_id"))
-	if err != nil {
-		BadParam(c, "attribute_id")
+	attribute, ok := retrieveAttribute(c, db)
+	if !ok {
 		return
 	}
 
-	// --- Find the Attribute {{{
-	attribute := models.NewAttribute()
-	attribute.SetID(id)
-
-	if err := db.PopulateByID(attribute); err != nil {
-		ServerError(c, err)
+	if !checkReadAccess(user, attribute, c, db) {
 		return
 	}
-
-	if attribute.UserID != user.ID().String() {
-		Unauthorized(c)
-		return
-	}
-	// }}}
 
 	c.Response(
 		200,
 		transfer.StringMap(transfer.Map(attribute)),
 	)
 }
+
+// --- }}}
+
+// --- AttributesPOST {{{
 
 func AttributesPOST(c *serve.Conn, db services.DB) {
 	user, ok := middleware.RetrieveUser(c, ServerError)
@@ -71,7 +82,7 @@ func AttributesPOST(c *serve.Conn, db services.DB) {
 		return
 	}
 
-	if user.ID().String() != attribute.UserID {
+	if user.ID().String() != attribute.OwnerID {
 		Unauthorized(c)
 		return
 	}
@@ -90,48 +101,29 @@ func AttributesPOST(c *serve.Conn, db services.DB) {
 	)
 }
 
+// --- }}}
+
+// --- AttributesDELETE {{{
+
 func AttributesDELETE(c *serve.Conn, db services.DB) {
 	user, ok := middleware.RetrieveUser(c, ServerError)
 	if !ok {
 		return
 	}
 
-	// --- Retrieve the ID {{{
-	stringID := c.ParamVal("attribute_id")
-	if stringID == "" {
-		BadParam(c, "attribute_id")
+	attribute, ok := retrieveAction(c, db)
+	if !ok {
 		return
 	}
 
-	id, err := db.ParseID(stringID)
-	if err != nil {
-		BadParam(c, "attribute_id")
+	if !checkWriteAccess(user, attribute, c, db) {
 		return
 	}
-	// --- }}}
-
-	// --- Delete the Attribute {{{
-	attribute := models.NewAttribute()
-	attribute.SetID(id)
-
-	if err := db.PopulateByID(attribute); err != nil {
-		ServerError(c, err)
-		return
-	}
-
-	if attribute.UserID != user.ID().String() {
-		Unauthorized(c)
-		return
-	}
-
-	if err := db.Delete(attribute); err != nil {
-		ServerError(c, err)
-		return
-	}
-	// }}}
 
 	c.Response(
 		200,
 		nil,
 	)
 }
+
+// --- }}}

@@ -5,11 +5,13 @@ import (
 	"fmt"
 
 	"github.com/elos/api/hermes"
+	"github.com/elos/api/services"
 	"github.com/elos/autonomous"
 	"github.com/elos/data"
 	"github.com/elos/data/transfer"
 	"github.com/elos/ehttp/serve"
 	"github.com/elos/ehttp/sock"
+	"github.com/elos/models"
 )
 
 func Unauthorized(c *serve.Conn) {
@@ -26,6 +28,44 @@ func ServerError(c *serve.Conn, err error) {
 
 func BadParam(c *serve.Conn, param string) {
 	c.Error(400, 4000, "Bad param", fmt.Sprintf("Bad parameter: %s", param))
+}
+
+func retrieveIDParam(name string, c *serve.Conn, db services.DB) (*data.ID, bool) {
+	id, err := db.ParseID(c.ParamVal(name))
+	if err != nil {
+		BadParam(c, name)
+		return new(data.ID), false
+	}
+
+	return &id, true
+}
+
+func checkReadAccess(user *models.User, property models.Property, c *serve.Conn, db data.DB) bool {
+	if canRead, err := user.CanRead(db, property); err != nil {
+		ServerError(c, err)
+		return false
+	} else {
+		if !canRead {
+			Unauthorized(c)
+			return false
+		}
+	}
+
+	return true
+}
+
+func checkWriteAccess(user *models.User, property models.Property, c *serve.Conn, db data.DB) bool {
+	if canWrite, err := user.CanWrite(db, property); err != nil {
+		ServerError(c, err)
+		return false
+	} else {
+		if !canWrite {
+			Unauthorized(c)
+			return false
+		}
+	}
+
+	return true
 }
 
 func Serve(a transfer.Action, k data.Kind, db data.DB) serve.Route {
