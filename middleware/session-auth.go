@@ -14,35 +14,35 @@ const (
 )
 
 type SessionAuth struct {
-	db                  services.DB
-	unauthorizedHandler serve.Route
+	DB                  services.DB
+	UnauthorizedHandler serve.Route
 }
 
 func (sa *SessionAuth) Inbound(c *serve.Conn) bool {
 	header := c.Request().Header
 	auth, ok := header[AuthHeader]
 	if !ok {
-		sa.unauthorizedHandler(c)
+		sa.UnauthorizedHandler(c)
 		return false
 	}
 
 	// be very strict about information provided
 	if len(auth) != 1 {
-		sa.unauthorizedHandler(c)
+		sa.UnauthorizedHandler(c)
 		return false
 	}
 
 	token := auth[0]
 
-	session, err := models.SessionForToken(sa.db, token)
+	session, err := models.SessionForToken(sa.DB, token)
 	if err != nil {
-		sa.unauthorizedHandler(c)
+		sa.UnauthorizedHandler(c)
 		return false
 	}
 
-	user, err := session.Owner(sa.db)
+	user, err := session.Owner(sa.DB)
 	if err != nil {
-		sa.unauthorizedHandler(c)
+		sa.UnauthorizedHandler(c)
 		return false
 	}
 
