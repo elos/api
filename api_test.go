@@ -82,11 +82,11 @@ func TestSessionsPOSTValidRequest(t *testing.T) {
 	credential.Spec = "password"
 
 	if err := db.Save(user); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if err := db.Save(credential); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	// --- }}}
 
@@ -94,12 +94,12 @@ func TestSessionsPOSTValidRequest(t *testing.T) {
 	u := server.URL + fmt.Sprintf("/sessions?public=%s&private=%s&user_id=%s", credential.Public, credential.Private, user.ID())
 	request, err := http.NewRequest("POST", u, strings.NewReader(""))
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	resp, err := http.DefaultClient.Do(request)
 	if err != nil {
-		t.Error(err) // something wrong while sending request
+		t.Fatal(err) // something wrong while sending request
 	}
 	// --- }}}
 
@@ -114,12 +114,12 @@ func TestSessionsPOSTValidRequest(t *testing.T) {
 
 	// It: should return a status of 201
 	if data["status"].(float64) != 201 {
-		t.Errorf("Expected status to be 201, but got %d", data["status"].(float64))
+		t.Fatalf("Expected status to be 201, but got %d", data["status"].(float64))
 	}
 
 	// It: should return a new session with token
 	if data["data"].(map[string]interface{})["session"] == nil {
-		t.Errorf("Expected data to have a session key")
+		t.Fatalf("Expected data to have a session key")
 	}
 }
 
