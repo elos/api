@@ -34,7 +34,7 @@ func init() {
 	db, err = models.MongoDB("localhost")
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Connection to database failed: %s", err)
 	}
 
 	middlewareStruct := &api.Middleware{

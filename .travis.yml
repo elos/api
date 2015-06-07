@@ -7,3 +7,6 @@ install:
     - export PATH=$PATH:$HOME/gopath/bin
 
 script: go test
+
+services:
+    - mongodb
