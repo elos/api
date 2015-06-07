@@ -66,7 +66,7 @@ func init() {
 
 // --- Context: "Valid Request" {{{
 
-func TestCreateUser(t *testing.T) {
+func TestSessionsPOSTValidRequest(t *testing.T) {
 
 	// --- GIVEN: A user with one 'password' credential {{{
 	user := models.NewUser()
