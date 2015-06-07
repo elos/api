@@ -1,7 +1,7 @@
 api
 ---
 
-Package `api` provides the structure `api.Api` which coordinates the [`routes`](https://github.com/elos/api/tree/master/routes), `middleware` and `services` of the Elos API.
+Package `api` provides the structure `api.Api` which coordinates the [`routes`](https://github.com/elos/api/tree/master/routes), [`middleware`](https://github.com/elos/api/tree/master/middleware) and [`services`](https://github.com/elos/api/tree/master/services) of the Elos API.
 
 ### Getting Started
 
