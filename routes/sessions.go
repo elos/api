@@ -86,6 +86,7 @@ func SessionsPOST(c *serve.Conn, db services.DB) {
 	}
 
 	credential, err := user.Authenticate(db, credentials["public"], credentials["private"])
+
 	if err != nil {
 		Unauthorized(c)
 		return
@@ -97,7 +98,7 @@ func SessionsPOST(c *serve.Conn, db services.DB) {
 	}
 
 	c.Response(
-		200,
+		201,
 		transfer.StringMap(transfer.Map(session)),
 	)
 }
