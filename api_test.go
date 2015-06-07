@@ -68,7 +68,7 @@ func init() {
 
 func TestCreateUser(t *testing.T) {
 
-	// --- Given {{{
+	// --- GIVEN: A user with one 'password' credential {{{
 	user := models.NewUser()
 	user.SetID(db.NewID())
 	credential := models.NewCredential()
@@ -90,7 +90,7 @@ func TestCreateUser(t *testing.T) {
 	}
 	// --- }}}
 
-	// --- When {{{
+	// --- WHEN: POST /sessions with public, private and user_id query params {{{
 	u := server.URL + fmt.Sprintf("/sessions?public=%s&private=%s&user_id=%s", credential.Public, credential.Private, user.ID())
 	request, err := http.NewRequest("POST", u, strings.NewReader(""))
 	if err != nil {
@@ -112,8 +112,14 @@ func TestCreateUser(t *testing.T) {
 		t.Error(err)
 	}
 
+	// It: should return a status of 201
 	if data["status"].(float64) != 201 {
 		t.Errorf("Expected status to be 201, but got %d", data["status"].(float64))
+	}
+
+	// It: should return a new session with token
+	if data["data"].(map[string]interface{})["session"] == nil {
+		t.Errorf("Expected data to have a session key")
 	}
 }
 
