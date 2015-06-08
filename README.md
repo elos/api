@@ -17,12 +17,16 @@ locally using your own go workspace, or you can start the vagrant-managed virtua
     # Start the vagrant box
     vagrant up
 
-    # No we can ssh in
+    # Now we can ssh in
     vagrant ssh
 
     # Once inside, cd into the preconfigured workspace
     vagrant:$~ cd $GOPATH
 ```
+
+##### You need
+    1. [Vagrant](http://www.vagrantup.com/downloads)
+    2. [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 
 #### Developing Locally
 
