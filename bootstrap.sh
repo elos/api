@@ -23,23 +23,39 @@ echo "== Mongo Installed =="
 # --- Install Go {{{
 
 echo "== Installing Go =="
+SRCROOT="/opt/go"
+SRCPATH="/opt/gopath"
 
-# Install requirements (GVM et al)
-apt-get update
-apt-get install htop curl git mercurial make binutils bison gcc build-essential --fix-missing -y
+# Get the ARCH
+ARCH=`uname -m | sed 's|i686|386|' | sed 's|x86_64|amd64|'`
 
-# Install GVM
-sudo -u vagrant HOME=/home/vagrant bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-source /home/vagrant/.gvm/scripts/gvm
-source /home/vagrant/.bashrc
+# Install Prereq Packages
+sudo apt-get update
+sudo apt-get install -y build-essential curl git-core libpcre3-dev mercurial pkg-config zip
 
-# Install go 1.4
-echo "== Installing go1.4 =="
-sudo -u vagrant GVM_ROOT=/home/vagrant/.gvm /home/vagrant/.gvm/bin/gvm install go1.4
-echo "== Installed go1.4 =="
+# Install Go
+cd /tmp
+wget -q https://storage.googleapis.com/golang/go1.4.2.linux-${ARCH}.tar.gz
+tar -xf go1.4.2.linux-${ARCH}.tar.gz
+sudo mv go $SRCROOT
+sudo chmod 775 $SRCROOT
+sudo chown vagrant:vagrant $SRCROOT
 
-echo "== Using go1.4 As Default=="
-sudo -u vagrant GVM_ROOT=/home/vagrant/.gvm /home/vagrant/.gvm/bin/gvm use go1.4
+# Setup the GOPATH; even though the shared folder spec gives the working
+# directory the right user/group, we need to set it properly on the
+# parent path to allow subsequent "go get" commands to work.
+sudo mkdir -p $SRCPATH
+sudo chown -R vagrant:vagrant $SRCPATH 2>/dev/null || true
+# ^^ silencing errors here because we expect this to fail for the shared folder
+
+cat <<EOF >/tmp/gopath.sh
+export GOPATH="$SRCPATH"
+export GOROOT="$SRCROOT"
+export PATH="$SRCROOT/bin:$SRCPATH/bin:\$PATH"
+EOF
+sudo mv /tmp/gopath.sh /etc/profile.d/gopath.sh
+sudo chmod 0755 /etc/profile.d/gopath.sh
+source /etc/profile.d/gopath.sh
 
 echo "== Go Installed =="
 
@@ -49,14 +65,11 @@ echo "== Go Installed =="
 
 echo "== Configuring Go =="
 
-# Add Environment Variables
-echo "export GOPATH=/home/vagrant/go" >> /home/vagrant/.bashrc
-
 # Source the bashrc to see the environment variables
 source /home/vagrant/.bashrc
 
 # Get all the dependencies
-cd /home/vagrant/go/src/github.com/elos/api && sudo -u vagrant go get
+cd $SRCPATH/src/github.com/elos/api && go get
 
 echo "== Go Configured =="
 

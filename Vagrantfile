@@ -14,9 +14,9 @@ Vagrant.configure(2) do |config|
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "ubuntu/trusty64"
 
-  config.vm.provision :shell, path: "bootstrap.sh"
+  config.vm.provision :shell, path: "bootstrap.sh", privileged: false
 
-  config.vm.synced_folder "./", "/home/vagrant/go/src/github.com/elos/api"
+  config.vm.synced_folder "./", "/opt/gopath/src/github.com/elos/api"
 
 
   # Disable automatic box update checking. If you disable this, then
