@@ -74,3 +74,9 @@ cd $SRCPATH/src/github.com/elos/api && go get
 echo "== Go Configured =="
 
 # --- }}}
+
+# --- Clear Up Memory {{{
+
+sudo apt-get purge -y chef puppet
+
+# --- }}}
