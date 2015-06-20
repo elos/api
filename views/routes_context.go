@@ -45,6 +45,10 @@ func (r *RoutesContext) Ontologies() string {
 	return fmt.Sprintf("/ontologies")
 }
 
+func (r *RoutesContext) Persons() string {
+	return fmt.Sprintf("/persons")
+}
+
 func (r *RoutesContext) Relations() string {
 	return fmt.Sprintf("/relations")
 }

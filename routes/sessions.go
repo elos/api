@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"errors"
 	"time"
 
 	"github.com/elos/api/middleware"
@@ -36,6 +37,29 @@ func SessionsGET(c *serve.Conn, db services.DB) {
 		return
 	}
 
+	// --- Specialty, if no session specified, return current {{{
+	if c.ParamVal(SessionIDParam) == "" {
+		v, ok := c.Context(middleware.SessionArtifact)
+		if !ok {
+			ServerError(c, errors.New("Session Artifact Missing"))
+			return
+		}
+
+		session, ok := v.(*models.Session)
+		if !ok {
+			ServerError(c, errors.New("Session Cast Failed"))
+			return
+		}
+
+		c.Response(
+			200,
+			transfer.StringMap(transfer.Map(session)),
+		)
+
+		return
+	}
+	// --- }}}
+
 	session, ok := retrieveSession(c, db)
 	if !ok {
 		return
@@ -55,19 +79,6 @@ func SessionsGET(c *serve.Conn, db services.DB) {
 
 // --- SessionsPOST {{{
 func SessionsPOST(c *serve.Conn, db services.DB) {
-	id, err := db.ParseID(c.ParamVal("user_id"))
-	if err != nil {
-		BadParam(c, "user_id")
-		return
-	}
-
-	user := models.NewUser()
-	user.SetID(id)
-	if err := db.PopulateByID(user); err != nil {
-		RecordNotFound(c)
-		return
-	}
-
 	credentials, err := c.ParamVals("public", "private")
 	if err != nil {
 		switch err.(type) {
@@ -85,7 +96,7 @@ func SessionsPOST(c *serve.Conn, db services.DB) {
 		}
 	}
 
-	credential, err := user.Authenticate(db, credentials["public"], credentials["private"])
+	credential, err := models.Authenticate(db, credentials["public"], credentials["private"])
 
 	if err != nil {
 		Unauthorized(c)
@@ -134,3 +145,7 @@ func SessionsDELETE(c *serve.Conn, db services.DB) {
 }
 
 // --- }}}
+
+func SessionsOPTIONS(c *serve.Conn) {
+	c.Write([]byte(""))
+}

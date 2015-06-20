@@ -9,8 +9,9 @@ import (
 )
 
 const (
-	AuthHeader   = "Elos-Auth"
-	UserArtifact = "session-user"
+	AuthHeader      = "Elos-Auth"
+	SessionArtifact = "session"
+	UserArtifact    = "session-user"
 )
 
 type SessionAuth struct {
@@ -46,6 +47,7 @@ func (sa *SessionAuth) Inbound(c *serve.Conn) bool {
 		return false
 	}
 
+	c.AddContext(SessionArtifact, session)
 	c.AddContext(UserArtifact, user)
 
 	return true

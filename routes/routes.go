@@ -19,6 +19,8 @@ const (
 
 	Ontologies = "/ontologies"
 
+	Persons = "/persons"
+
 	Relations = "/relations"
 
 	Routines = "/routines"

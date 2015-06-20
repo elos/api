@@ -9,6 +9,8 @@ import (
 )
 
 type Middleware struct {
+	Cors serve.Middleware
+
 	Log serve.Middleware
 
 	SessionAuth serve.Middleware

@@ -25,6 +25,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -32,6 +36,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.SessionsGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -47,7 +55,67 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		routes.SessionsPOST(c, s.DB)
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Sessions, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.SessionsDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.OPTIONS(routes.Sessions, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		routes.SessionsOPTIONS(c)
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
 
 		if ok := m.Log.Outbound(c); !ok {
 			return
@@ -61,6 +129,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -68,6 +140,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.ActionsGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -83,6 +159,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -90,6 +170,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.ActionsPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -105,6 +189,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -112,6 +200,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.ActionsDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -127,6 +219,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -134,6 +230,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.AttributesGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -149,6 +249,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -156,6 +260,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.AttributesPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -171,6 +279,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -178,6 +290,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.AttributesDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -193,6 +309,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -200,6 +320,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.CalendarsGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -215,6 +339,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -222,6 +350,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.CalendarsPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -237,6 +369,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -244,6 +380,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.CalendarsDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -259,6 +399,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -266,6 +410,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.ClassesGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -281,6 +429,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -288,6 +440,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.ClassesPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -303,6 +459,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -310,6 +470,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.ClassesDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -325,6 +489,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -332,6 +500,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.EventsGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -347,6 +519,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -354,6 +530,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.EventsPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -369,6 +549,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -376,6 +560,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.EventsDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -391,6 +579,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -398,6 +590,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.FixturesGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -413,6 +609,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -420,6 +620,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.FixturesPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -435,6 +639,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -442,6 +650,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.FixturesDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -457,6 +669,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -464,6 +680,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.LinksGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -479,6 +699,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -486,6 +710,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.LinksPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -501,6 +729,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -508,6 +740,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.LinksDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -523,6 +759,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -530,6 +770,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.ObjectsGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -545,6 +789,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -552,6 +800,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.ObjectsPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -567,6 +819,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -574,6 +830,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.ObjectsDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -589,6 +849,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -596,6 +860,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.OntologiesGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -611,6 +879,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -618,6 +890,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.OntologiesPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -633,6 +909,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -640,6 +920,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.OntologiesDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -655,6 +939,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -662,6 +950,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.RelationsGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -677,6 +969,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -684,6 +980,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.RelationsPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -699,6 +999,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -706,6 +1010,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.RelationsDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -721,6 +1029,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -728,6 +1040,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.RoutinesGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -743,6 +1059,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -750,6 +1070,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.RoutinesPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -765,6 +1089,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -772,6 +1100,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.RoutinesDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -787,6 +1119,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -794,6 +1130,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.SchedulesGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -809,6 +1149,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -816,6 +1160,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.SchedulesPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -831,6 +1179,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -838,6 +1190,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.SchedulesDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -853,6 +1209,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -860,6 +1220,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.TasksGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -875,6 +1239,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -882,6 +1250,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.TasksPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -897,6 +1269,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -904,6 +1280,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.TasksDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -919,6 +1299,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -926,6 +1310,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.TraitsGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -941,6 +1329,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -948,6 +1340,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.TraitsPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -963,6 +1359,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -970,6 +1370,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.TraitsDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -985,6 +1389,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -992,6 +1400,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.UsersGET(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -1007,6 +1419,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -1014,6 +1430,10 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.UsersPOST(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 
@@ -1029,6 +1449,10 @@ func router(m *Middleware, s *Services) serve.Router {
 			return
 		}
 
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
 		if ok := m.SessionAuth.Inbound(c); !ok {
 			return
 		}
@@ -1036,6 +1460,144 @@ func router(m *Middleware, s *Services) serve.Router {
 		routes.UsersDELETE(c, s.DB)
 
 		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.OPTIONS(routes.Users, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		routes.UsersOPTIONS(c)
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.Persons, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.PersonsGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Persons, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.PersonsPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Persons, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.PersonsDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.OPTIONS(routes.Persons, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		routes.PersonsOPTIONS(c)
+
+		if ok := m.Cors.Outbound(c); !ok {
 			return
 		}
 

@@ -77,17 +77,17 @@ func ActionsPOST(c *serve.Conn, db services.DB) {
 		creation = true
 	}
 
-	if err := db.Save(action); err != nil {
-		ServerError(c, err)
-		return
-	}
-
 	if user.ID().String() != action.OwnerID {
 		Unauthorized(c)
 		return
 	}
 
-	var status uint64
+	if err := db.Save(action); err != nil {
+		ServerError(c, err)
+		return
+	}
+
+	var status int
 	if creation {
 		status = 201
 	} else {

@@ -87,7 +87,7 @@ func AttributesPOST(c *serve.Conn, db services.DB) {
 		return
 	}
 
-	var status uint64
+	var status int
 	if creation {
 		status = 201
 	} else {
