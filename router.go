@@ -393,6 +393,28 @@ func router(m *Middleware, s *Services) serve.Router {
 
 	})
 
+	router.OPTIONS(routes.Calendars, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		routes.CalendarsOPTIONS(c)
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
 	router.GET(routes.Classes, func(c *serve.Conn) {
 
 		if ok := m.Log.Inbound(c); !ok {
@@ -652,6 +674,28 @@ func router(m *Middleware, s *Services) serve.Router {
 		if ok := m.SessionAuth.Outbound(c); !ok {
 			return
 		}
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.OPTIONS(routes.Fixtures, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		routes.FixturesOPTIONS(c)
 
 		if ok := m.Cors.Outbound(c); !ok {
 			return
@@ -1192,6 +1236,28 @@ func router(m *Middleware, s *Services) serve.Router {
 		if ok := m.SessionAuth.Outbound(c); !ok {
 			return
 		}
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.OPTIONS(routes.Schedules, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		routes.SchedulesOPTIONS(c)
 
 		if ok := m.Cors.Outbound(c); !ok {
 			return

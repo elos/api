@@ -5,6 +5,7 @@ import (
 
 	"github.com/elos/api/middleware"
 	"github.com/elos/api/services"
+	"github.com/elos/data"
 	"github.com/elos/data/transfer"
 	"github.com/elos/ehttp/serve"
 	"github.com/elos/models"
@@ -38,7 +39,11 @@ func PersonsGET(c *serve.Conn, db services.DB) {
 		person := models.NewPerson()
 
 		if err := db.PopulateByField("owner_id", user.ID().String(), person); err != nil {
-			ServerError(c, err)
+			if err == data.ErrNotFound {
+				RecordNotFound(c)
+			} else {
+				ServerError(c, err)
+			}
 			return
 		}
 

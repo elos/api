@@ -76,6 +76,10 @@ func CalendarsPOST(c *serve.Conn, db services.DB) {
 		creation = true
 	}
 
+	if calendar.OwnerID == "" {
+		calendar.OwnerID = user.Id
+	}
+
 	if user.ID().String() != calendar.OwnerID {
 		Unauthorized(c)
 		return
@@ -130,3 +134,7 @@ func CalendarsDELETE(c *serve.Conn, db services.DB) {
 }
 
 // --- }}}
+
+func CalendarsOPTIONS(c *serve.Conn) {
+	c.WriteHeader(200)
+}

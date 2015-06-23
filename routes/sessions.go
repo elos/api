@@ -106,6 +106,7 @@ func SessionsPOST(c *serve.Conn, db services.DB) {
 	session, err := credential.NewSession(db, 3600*time.Second)
 	if err != nil {
 		ServerError(c, err)
+		return
 	}
 
 	c.Response(
