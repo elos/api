@@ -1,6 +1,7 @@
 package api
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/elos/api/services"
@@ -30,6 +31,26 @@ type Api struct {
 
 func New(m *Middleware, s *Services) *Api {
 	router := router(m, s)
+
+	if m.Cors == nil {
+		log.Fatal("Middleware Cors is nil")
+	}
+
+	if m.Log == nil {
+		log.Fatal("Middleware Log is nil")
+	}
+
+	if m.SessionAuth == nil {
+		log.Fatal("Middleware SessionAuth is nil")
+	}
+
+	if s.Agents == nil {
+		log.Fatal("Service Agents is nil")
+	}
+
+	if s.DB == nil {
+		log.Fatal("Service DB is nil")
+	}
 
 	return &Api{
 		router:     router,
