@@ -6,28 +6,21 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure(2) do |config|
-  # The most common configuration options are documented and commented below.
-  # For a complete reference, please see the online documentation at
-  # https://docs.vagrantup.com.
+  # For a complete reference: https://docs.vagrantup.com.
 
-  # Every Vagrant development environment requires a box. You can search for
-  # boxes at https://atlas.hashicorp.com/search.
+  # Use Ubuntu 14.04
   config.vm.box = "ubuntu/trusty64"
 
-  config.vm.provision :shell, path: "bootstrap.sh", privileged: false
+  # Run our bootstrap script, w/o root
+  config.vm.provision :shell, path: "./scripts/bootstrap.sh", privileged: false
 
+  # Put the api folder where it should be for go path
   config.vm.synced_folder "./", "/opt/gopath/src/github.com/elos/api"
 
+  # Accessing localhost:8080 will access port 80 on the guest machine.
+  config.vm.network "forwarded_port", guest: 80, host: 8080
 
-  # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
-  # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
-
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
+  # Extra Options from Vagrantfile Generation {{{
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -73,4 +66,6 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get update
   #   sudo apt-get install -y apache2
   # SHELL
+
+  # --- }}}
 end
