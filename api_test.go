@@ -39,7 +39,8 @@ func init() {
 	}
 
 	middlewareStruct := &api.Middleware{
-		Log: new(emiddleware.Null),
+		Cors: new(middleware.Cors),
+		Log:  new(emiddleware.Null),
 		SessionAuth: &middleware.SessionAuth{
 			DB:                  db,
 			UnauthorizedHandler: routes.Unauthorized,
@@ -96,7 +97,6 @@ func buildUserAndCredential(db data.DB) (*models.User, *models.Credential) {
 // --- Context: "Valid Request" {{{
 
 func TestSessionsGETValidRequest(t *testing.T) {
-
 	// --- GIVEN: user with a 'password' credential and a session {{{
 
 	_, credential := buildUserAndCredential(db)
@@ -121,6 +121,7 @@ func TestSessionsGETValidRequest(t *testing.T) {
 	}
 	// --- }}}
 
+	// --- THEN: 200 with session {{{
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	t.Log(string(body))
@@ -139,6 +140,7 @@ func TestSessionsGETValidRequest(t *testing.T) {
 	if data["data"].(map[string]interface{})["session"] == nil {
 		t.Fatalf("Expected data to have a session key")
 	}
+	// --- }}}
 }
 
 // --- }}}
@@ -169,6 +171,7 @@ func TestSessionsGETUnauthorized(t *testing.T) {
 	}
 	// --- }}}
 
+	// --- THEN: 403 without session {{{
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	t.Log(string(body))
@@ -182,6 +185,7 @@ func TestSessionsGETUnauthorized(t *testing.T) {
 	if data["status"].(float64) != 403 {
 		t.Fatalf("Expected status to be 403, but got %d", data["status"].(float64))
 	}
+	// --- }}}
 }
 
 // --- }}}
@@ -193,7 +197,6 @@ func TestSessionsGETUnauthorized(t *testing.T) {
 // --- Context: "Valid Request" {{{
 
 func TestSessionsPOSTValidRequest(t *testing.T) {
-
 	// --- GIVEN: A user with one 'password' credential {{{
 
 	user, credential := buildUserAndCredential(db)
@@ -215,6 +218,7 @@ func TestSessionsPOSTValidRequest(t *testing.T) {
 
 	// --- }}}
 
+	// --- THEN: 201 with session {{{
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	t.Log(string(body))
@@ -233,6 +237,7 @@ func TestSessionsPOSTValidRequest(t *testing.T) {
 	if data["data"].(map[string]interface{})["session"] == nil {
 		t.Fatalf("Expected data to have a session key")
 	}
+	// --- }}}
 }
 
 // --- }}}
