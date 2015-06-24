@@ -21,6 +21,8 @@ const (
 
 	Persons = "/persons"
 
+	Property = "/property"
+
 	Relations = "/relations"
 
 	Routines = "/routines"

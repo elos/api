@@ -49,6 +49,10 @@ func (r *RoutesContext) Persons() string {
 	return fmt.Sprintf("/persons")
 }
 
+func (r *RoutesContext) Property() string {
+	return fmt.Sprintf("/property")
+}
+
 func (r *RoutesContext) Relations() string {
 	return fmt.Sprintf("/relations")
 }

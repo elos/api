@@ -62,7 +62,7 @@ func init() {
 
 // --- }}}
 
-// --- Describe: /sessions {{{
+// --- Describe: /sessions/ {{{
 
 // --- Factories {{{
 
@@ -245,3 +245,73 @@ func TestSessionsPOSTValidRequest(t *testing.T) {
 // --- }}}
 
 // --- }}}
+
+// --- Describe: /property/ {{{
+
+// --- Describe: "GET" {{{
+
+// --- Context: Valid request {{{
+func TestPropertyGETValidRequest(t *testing.T) {
+	// --- GIVEN: user with a 'password' credential and a session & property {{{
+	user, credential := buildUserAndCredential(db)
+	session, err := credential.NewSession(db, 3600*time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	p := models.NewPerson()
+	p.SetID(db.NewID())
+	p.SetOwner(user)
+	if err := db.Save(p); err != nil {
+		log.Fatal(err)
+	}
+	// --- }}}
+
+	// --- WHEN: GET /property/ session_id query param and appropriate auth header {{{
+	u := server.URL + "/property"
+	request, err := http.NewRequest("GET", u, strings.NewReader(""))
+	request.Header.Add(middleware.AuthHeader, session.Token)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := http.DefaultClient.Do(request)
+	if err != nil {
+		t.Fatal(err) // something wrong while sending request
+	}
+	// --- }}}
+
+	// --- THEN: 200 with property {{{
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	t.Log(string(body))
+
+	// get the response data
+	data := make(map[string]interface{})
+	if err := json.Unmarshal(body, &data); err != nil {
+		log.Fatal(err)
+	}
+
+	// It: should return a status of 200
+	if data["status"].(float64) != 200 {
+		t.Fatalf("Expected status to be 200, but got %d", data["status"].(float64))
+	}
+
+	persons, ok := data["data"].(map[string]interface{})["person"]
+
+	// It: should return a session
+	if !ok {
+		t.Fatalf("Expected data to have a person key")
+	}
+
+	if persons.([]interface{})[0].(map[string]interface{})["id"] != p.ID().String() {
+		t.Fatalf("Expected first and only person record to match person record we created")
+	}
+	// --- }}}
+}
+
+// --- }}}
+
+// --- }}}
+
+// --- }}}}
