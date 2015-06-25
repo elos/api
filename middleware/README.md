@@ -27,8 +27,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-But now if we want to write a goodbye handler, we duplicate the logging logic. Not to mention the loggin may not be consisted
-across all the handlers. Also not to mention, it has nothing to do with handling the requests. 
+But now if we want to write a goodbye handler, we duplicate the logging logic.
 ```go
 func goodbyeHandler(w http.ResponseWriter, r *http.Request) {
     log.Print("goodbye was hit")
@@ -36,6 +35,7 @@ func goodbyeHandler(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-So we have middleware. Handlers that see the request before the main one. Perhaps a `LogRequest` middleware that we wrap
-every handler in so that it logs that the `/hello` and `/goodbye` routes are getting hit.
+The logging done by different engineers implementing different endpoints may not be consistent. We want consistent well-formatted information across all the handlers. Also logging actually has nothing fundamentally to do with handling the requests. So we break it out
+
+So we have middleware. Handlers that see the request before the main one. Perhaps a `LogRequest` middleware that we wrap every handler in so that it logs that the `/hello` and `/goodbye` routes are getting hit.
 
