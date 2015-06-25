@@ -62,8 +62,6 @@ func init() {
 
 // --- }}}
 
-// --- Describe: /sessions/ {{{
-
 // --- Factories {{{
 
 func buildUserAndCredential(db data.DB) (*models.User, *models.Credential) {
@@ -91,6 +89,69 @@ func buildUserAndCredential(db data.DB) (*models.User, *models.Credential) {
 }
 
 // --- }}}
+
+// --- Describe: /calendars {{{
+
+// --- Describe: "GET" {{{
+
+// --- Content: Valid Request {{{
+
+func TestCalendarsGETValidRequest(t *testing.T) {
+	user, credential := buildUserAndCredential(db)
+	session, err := credential.NewSession(db, 3600*time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	calendar := models.NewCalendar()
+	calendar.SetID(db.NewID())
+	calendar.SetOwner(user)
+	if err := db.Save(calendar); err != nil {
+		t.Fatal(err)
+	}
+
+	u := server.URL + fmt.Sprintf("/calendars?calendar_id=%s", calendar.ID())
+	request, err := http.NewRequest("GET", u, strings.NewReader(""))
+	request.Header.Add(middleware.AuthHeader, session.Token)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := http.DefaultClient.Do(request)
+	if err != nil {
+		t.Fatal(err) // something wrong while sending request
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	t.Log(string(body))
+
+	data := make(map[string]interface{})
+	if err := json.Unmarshal(body, &data); err != nil {
+		t.Error(err)
+	}
+
+	// It: should return a status of 200
+	if data["status"].(float64) != 200 {
+		t.Fatalf("Expected status to be 200, but got %d", data["status"].(float64))
+	}
+
+	// It: should return a session
+	if data["data"].(map[string]interface{})["calendar"] == nil {
+		t.Fatalf("Expected data to have a calendar key")
+	}
+
+	// --- }}}
+
+}
+
+// --- }}}
+
+// --- }}}
+
+// --- }}}
+
+// --- Describe: /sessions/ {{{
 
 // --- Describe: "GET" {{{
 
