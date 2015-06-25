@@ -28,7 +28,8 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 ```
 
 But now if we want to write a goodbye handler, we duplicate the logging logic. Not to mention the loggin may not be consisted
-across all the handlers. Also not to mention, it has nothing to do with handling the requests. ```go
+across all the handlers. Also not to mention, it has nothing to do with handling the requests. 
+```go
 func goodbyeHandler(w http.ResponseWriter, r *http.Request) {
     log.Print("goodbye was hit")
     w.Write([]byte("Goodbye"))
