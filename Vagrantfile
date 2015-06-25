@@ -20,6 +20,9 @@ Vagrant.configure(2) do |config|
   # Accessing localhost:8080 will access port 80 on the guest machine.
   config.vm.network "forwarded_port", guest: 80, host: 8080
 
+  # Want to be able to work offline
+  config.vm.box_check_update = false
+
   # Extra Options from Vagrantfile Generation {{{
 
   # Create a private network, which allows host-only access to the machine
