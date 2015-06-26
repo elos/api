@@ -1,17 +1,13 @@
 package middleware
 
-import "github.com/elos/ehttp/serve"
+import "github.com/elos/ehttp/middleware"
 
-type Cors int
-
-func (cors *Cors) Inbound(c *serve.Conn) bool {
-	c.Header().Add("Access-Control-Allow-Origin", c.Request().Header.Get("Origin"))
-	c.Header().Add("Access-Control-Allow-Credentials", "true")
-	c.Header().Add("Access-Control-Allow-Headers", AuthHeader)
-
-	return true
+// Cors wraps the ehttp/middleware.Cors type
+type Cors struct {
+	*middleware.Cors
 }
 
-func (cors *Cors) Outbound(c *serve.Conn) bool {
-	return true
+// NewCors constructs a new Cors object with Allowed Headers = headers
+func NewCors(headers ...string) *Cors {
+	return &Cors{middleware.NewCors(headers...)}
 }
