@@ -30,7 +30,7 @@ func main() {
 
 	// Setup Middleware
 	middleware := &api.Middleware{
-		Cors: new(apimiddleware.Cors),
+		Cors: apimiddleware.NewCors(apimiddleware.AuthHeader),
 		Log:  emiddleware.LogRequest,
 		SessionAuth: &apimiddleware.SessionAuth{
 			DB:                  db,

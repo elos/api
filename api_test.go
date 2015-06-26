@@ -39,7 +39,7 @@ func init() {
 	}
 
 	middlewareStruct := &api.Middleware{
-		Cors: new(middleware.Cors),
+		Cors: middleware.NewCors(middleware.AuthHeader),
 		Log:  new(emiddleware.Null),
 		SessionAuth: &middleware.SessionAuth{
 			DB:                  db,
