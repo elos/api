@@ -47,10 +47,31 @@ func UsersGET(c *serve.Conn, db services.DB) {
 	)
 }
 
-func UsersPOST(c *serve.Conn, db services.DB) {}
+func UsersPOST(c *serve.Conn, db services.DB) {
+}
 
-func UsersDELETE(c *serve.Conn, db services.DB) {}
+func UsersDELETE(c *serve.Conn, db services.DB) {
+	user, ok := middleware.RetrieveUser(c, ServerError)
+	if !ok {
+		return
+	}
+
+	queriedUser, ok := retrieveUser(c, db)
+	if !ok {
+		return
+	}
+
+	if queriedUser.ID().String() != user.ID().String() {
+		Unauthorized(c)
+		return
+	}
+
+	c.Response(
+		200,
+		transfer.StringMap(transfer.Map(queriedUser)),
+	)
+}
 
 func UsersOPTIONS(c *serve.Conn) {
-	c.WriteHeader(200)
+	OPTIONS(models.UserKind, c)
 }
