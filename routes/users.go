@@ -48,6 +48,7 @@ func UsersGET(c *serve.Conn, db services.DB) {
 }
 
 func UsersPOST(c *serve.Conn, db services.DB) {
+
 }
 
 func UsersDELETE(c *serve.Conn, db services.DB) {

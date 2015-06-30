@@ -69,6 +69,11 @@ func POST(k data.Kind, c *serve.Conn, db services.DB) {
 		return
 	}
 
+	_, err := model.(models.Property).Owner(db)
+	if err == models.ErrEmptyLink {
+		model.(models.Property).SetOwner(user)
+	}
+
 	creation := false
 
 	if model.ID().String() == "" {

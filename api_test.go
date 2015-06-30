@@ -141,15 +141,13 @@ func TestCalendarsGETValidRequest(t *testing.T) {
 		t.Fatalf("Expected data to have a calendar key")
 	}
 
-	// --- }}}
-
 }
 
-// --- }}}
+// --- Content: Valid Request }}}
 
-// --- }}}
+// --- Describe: "GET" }}}
 
-// --- }}}
+// --- Describe: /calendars }}}
 
 // --- Describe: /sessions/ {{{
 
