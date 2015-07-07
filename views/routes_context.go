@@ -25,6 +25,18 @@ func (r *RoutesContext) Classes() string {
 	return fmt.Sprintf("/classes")
 }
 
+func (r *RoutesContext) Data() string {
+	return fmt.Sprintf("/data")
+}
+
+func (r *RoutesContext) DataQuery() string {
+	return fmt.Sprintf("/data/query")
+}
+
+func (r *RoutesContext) DataTags() string {
+	return fmt.Sprintf("/data/tags")
+}
+
 func (r *RoutesContext) Events() string {
 	return fmt.Sprintf("/events")
 }

@@ -1673,6 +1673,222 @@ func router(m *Middleware, s *Services) serve.Router {
 
 	})
 
+	router.GET(routes.Data, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.DataGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.POST(routes.Data, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.DataPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.DELETE(routes.Data, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.DataDELETE(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.OPTIONS(routes.Data, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		routes.DataOPTIONS(c)
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.DataTags, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.DataTagsGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.OPTIONS(routes.DataTags, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		routes.DataTagsOPTIONS(c)
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.GET(routes.DataQuery, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.DataQueryGET(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.OPTIONS(routes.DataQuery, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		routes.DataQueryOPTIONS(c)
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
 	router.GET(routes.Property, func(c *serve.Conn) {
 
 		if ok := m.Log.Inbound(c); !ok {

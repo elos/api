@@ -9,6 +9,12 @@ const (
 
 	Classes = "/classes"
 
+	Data = "/data"
+
+	DataQuery = "/data/query"
+
+	DataTags = "/data/tags"
+
 	Events = "/events"
 
 	Fixtures = "/fixtures"
