@@ -1,0 +1,9 @@
+application {
+    name = "otto"
+    type = "go"
+
+    dependency {
+        source = "github.com/nlandolfi/otto-mongodb"
+    }
+}
+

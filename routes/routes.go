@@ -7,8 +7,6 @@ const (
 
 	Calendars = "/calendars"
 
-	Classes = "/classes"
-
 	Data = "/data"
 
 	DataQuery = "/data/query"
@@ -18,6 +16,8 @@ const (
 	Events = "/events"
 
 	Fixtures = "/fixtures"
+
+	Groups = "/groups"
 
 	Links = "/links"
 

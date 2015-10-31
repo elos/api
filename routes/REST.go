@@ -9,6 +9,7 @@ import (
 	"github.com/elos/data/transfer"
 	"github.com/elos/ehttp/serve"
 	"github.com/elos/models"
+	"github.com/elos/models/access"
 )
 
 // --- Helpers {{{
@@ -43,7 +44,7 @@ func GET(k data.Kind, c *serve.Conn, db services.DB) {
 		return
 	}
 
-	if !checkReadAccess(user, model.(models.Property), c, db) {
+	if !checkReadAccess(user, model.(access.ModelProperty), c, db) {
 		return
 	}
 
@@ -76,7 +77,7 @@ func POST(k data.Kind, c *serve.Conn, db services.DB) {
 		creation = true
 	}
 
-	if !creation && !checkWriteAccess(user, model.(models.Property), c, db) {
+	if !creation && !checkWriteAccess(user, model.(access.ModelProperty), c, db) {
 		return
 	}
 
@@ -112,7 +113,7 @@ func DELETE(k data.Kind, c *serve.Conn, db services.DB) {
 		return
 	}
 
-	if !checkWriteAccess(user, model.(models.Property), c, db) {
+	if !checkWriteAccess(user, model.(access.ModelProperty), c, db) {
 		return
 	}
 

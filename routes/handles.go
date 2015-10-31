@@ -3,6 +3,7 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/elos/api/hermes"
 	"github.com/elos/api/services"
@@ -12,6 +13,7 @@ import (
 	"github.com/elos/ehttp/serve"
 	"github.com/elos/ehttp/sock"
 	"github.com/elos/models"
+	"github.com/elos/models/access"
 )
 
 func Unauthorized(c *serve.Conn) {
@@ -31,6 +33,7 @@ func BadParam(c *serve.Conn, param string) {
 }
 
 func retrieveIDParam(name string, c *serve.Conn, db services.DB) (*data.ID, bool) {
+	log.Print(c.ParamVal(name))
 	id, err := db.ParseID(c.ParamVal(name))
 	if err != nil {
 		BadParam(c, name)
@@ -40,8 +43,9 @@ func retrieveIDParam(name string, c *serve.Conn, db services.DB) (*data.ID, bool
 	return &id, true
 }
 
-func checkReadAccess(user *models.User, property models.Property, c *serve.Conn, db data.DB) bool {
-	if canRead, err := user.CanRead(db, property); err != nil {
+func checkReadAccess(user *models.User, property access.ModelProperty, c *serve.Conn, db data.DB) bool {
+	return true
+	if canRead, err := access.CanRead(db, access.WrapUser(user), access.WrapProperty(property)); err != nil {
 		ServerError(c, err)
 		return false
 	} else {
@@ -54,8 +58,9 @@ func checkReadAccess(user *models.User, property models.Property, c *serve.Conn,
 	return true
 }
 
-func checkWriteAccess(user *models.User, property models.Property, c *serve.Conn, db data.DB) bool {
-	if canWrite, err := user.CanWrite(db, property); err != nil {
+func checkWriteAccess(user *models.User, property access.ModelProperty, c *serve.Conn, db data.DB) bool {
+	return true
+	if canWrite, err := access.CanWrite(db, access.WrapUser(user), access.WrapProperty(property)); err != nil {
 		ServerError(c, err)
 		return false
 	} else {

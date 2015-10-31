@@ -2,6 +2,7 @@ package routes
 
 import (
 	"errors"
+	"log"
 	"time"
 
 	"github.com/elos/api/middleware"
@@ -80,14 +81,19 @@ func SessionsGET(c *serve.Conn, db services.DB) {
 // --- SessionsPOST {{{
 func SessionsPOST(c *serve.Conn, db services.DB) {
 	credentials, err := c.ParamVals("public", "private")
+
+	log.Printf("Found credentials: %v", credentials)
+
 	if err != nil {
 		switch err.(type) {
 		case *ehttp.MissingParamError:
 			if string(*err.(*ehttp.MissingParamError)) == "public" {
 				BadParam(c, "public")
+				log.Printf("Missing public credential")
 				return
 			} else {
 				BadParam(c, "private")
+				log.Printf("Missing private credential")
 				return
 			}
 
@@ -99,6 +105,7 @@ func SessionsPOST(c *serve.Conn, db services.DB) {
 	credential, err := models.Authenticate(db, credentials["public"], credentials["private"])
 
 	if err != nil {
+		log.Printf("Authentication failed: %s", err)
 		Unauthorized(c)
 		return
 	}
@@ -108,6 +115,8 @@ func SessionsPOST(c *serve.Conn, db services.DB) {
 		ServerError(c, err)
 		return
 	}
+
+	log.Printf("Successfully authenticated with session: %+v", transfer.Map(session)["session"])
 
 	c.Response(
 		201,

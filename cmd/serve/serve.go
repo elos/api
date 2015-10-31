@@ -7,7 +7,6 @@ import (
 	apimiddleware "github.com/elos/api/middleware"
 	"github.com/elos/api/routes"
 	"github.com/elos/autonomous"
-	"github.com/elos/data/builtin/mongo"
 	emiddleware "github.com/elos/ehttp/middleware"
 	"github.com/elos/ehttp/serve"
 	"github.com/elos/models"
@@ -19,11 +18,13 @@ func main() {
 	go hub.Start()
 	hub.WaitStart()
 
+	// Mongo should be running on consul
 	// Start mongo
 	// mongo.Runner.ConfigFile = "mongo.conf"
-	go hub.StartAgent(mongo.Runner)
+	// go hub.StartAgent(mongo.Runner)
 
-	db, err := models.MongoDB("localhost")
+	db, err := models.MongoDB("172.16.1.78:27017")
+	//db, err := models.MongoDB("mongodb.service.consul:27017")
 	if err != nil {
 		log.Fatal(err)
 	}

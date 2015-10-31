@@ -13,7 +13,6 @@ var Domains = []data.Kind{
 	models.ActionKind,
 	models.AttributeKind,
 	models.CalendarKind,
-	models.ClassKind,
 	models.EventKind,
 	models.FixtureKind,
 	models.LinkKind,

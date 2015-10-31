@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/elos/autonomous"
-	"github.com/elos/data/builtin/mongo"
 	"github.com/elos/models"
 )
 
@@ -13,9 +12,9 @@ func main() {
 	go hub.Start()
 	hub.WaitStart()
 
-	go hub.StartAgent(mongo.Runner)
+	//	go hub.StartAgent(mongo.Runner)
 
-	db, err := models.MongoDB("localhost")
+	db, err := models.MongoDB("172.16.1.78:27017")
 	if err != nil {
 		log.Fatal(err)
 	}

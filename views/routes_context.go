@@ -21,10 +21,6 @@ func (r *RoutesContext) Calendars() string {
 	return fmt.Sprintf("/calendars")
 }
 
-func (r *RoutesContext) Classes() string {
-	return fmt.Sprintf("/classes")
-}
-
 func (r *RoutesContext) Data() string {
 	return fmt.Sprintf("/data")
 }
@@ -43,6 +39,10 @@ func (r *RoutesContext) Events() string {
 
 func (r *RoutesContext) Fixtures() string {
 	return fmt.Sprintf("/fixtures")
+}
+
+func (r *RoutesContext) Groups() string {
+	return fmt.Sprintf("/groups")
 }
 
 func (r *RoutesContext) Links() string {
