@@ -29,6 +29,8 @@ const (
 
 	Property = "/property"
 
+	Query = "/query"
+
 	Relations = "/relations"
 
 	Routines = "/routines"

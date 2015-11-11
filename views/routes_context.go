@@ -65,6 +65,10 @@ func (r *RoutesContext) Property() string {
 	return fmt.Sprintf("/property")
 }
 
+func (r *RoutesContext) Query() string {
+	return fmt.Sprintf("/query")
+}
+
 func (r *RoutesContext) Relations() string {
 	return fmt.Sprintf("/relations")
 }

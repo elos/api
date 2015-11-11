@@ -2023,5 +2023,57 @@ func router(m *Middleware, s *Services) serve.Router {
 
 	})
 
+	router.POST(routes.Query, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.SessionAuth.Inbound(c); !ok {
+			return
+		}
+
+		routes.QueryPOST(c, s.DB)
+
+		if ok := m.SessionAuth.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
+	router.OPTIONS(routes.Query, func(c *serve.Conn) {
+
+		if ok := m.Log.Inbound(c); !ok {
+			return
+		}
+
+		if ok := m.Cors.Inbound(c); !ok {
+			return
+		}
+
+		routes.QueryOPTIONS(c)
+
+		if ok := m.Cors.Outbound(c); !ok {
+			return
+		}
+
+		if ok := m.Log.Outbound(c); !ok {
+			return
+		}
+
+	})
+
 	return router
 }
