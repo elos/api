@@ -7,16 +7,7 @@ import "testing"
 // --- Context: Valid Request {{{
 
 func TestSessionsGETValid(t *testing.T) {
-	u := &session.
-	NewSessionForUser
-	w := httptest.NewRecorder()
-	c := serve.NewConn(
-		w,
-		&http.Request{},
-		TestParams{
-			"session_id":
-		}
-	)
+	t.Skip()
 }
 
 // --- Context: Valid Request }}}

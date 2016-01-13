@@ -35,7 +35,7 @@ func QueryPOST(c *serve.Conn, db services.DB) {
 
 	log.Print("Query: %+v", query)
 
-	q := db.NewQuery(query.Kind)
+	q := db.Query(query.Kind)
 	q.Select(query.Attrs)
 	q.Skip(query.Skip)
 	q.Limit(query.Limit)

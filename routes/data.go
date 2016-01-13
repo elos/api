@@ -33,7 +33,7 @@ func DataTagsGET(c *serve.Conn, db services.DB) {
 		return
 	}
 
-	q := db.NewQuery(models.DatumKind)
+	q := db.Query(models.DatumKind)
 
 	iter, err := q.Select(data.AttrMap{"owner_id": user.ID().String()}).Execute()
 	if err != nil {
@@ -112,7 +112,7 @@ func DataQueryGET(c *serve.Conn, db services.DB) {
 	datum := models.NewDatum()
 
 	// Query
-	q := db.NewQuery(models.DatumKind)
+	q := db.Query(models.DatumKind)
 
 	// Iterate
 	iter, err := q.Select(data.AttrMap{"owner_id": user.ID().String()}).Execute()

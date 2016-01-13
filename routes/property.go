@@ -38,7 +38,7 @@ func PropertyGET(c *serve.Conn, db services.DB) {
 	for _, domain := range Domains {
 		property[domain] = make([]data.Record, 0)
 
-		q := db.NewQuery(domain)
+		q := db.Query(domain)
 
 		q.Select(data.AttrMap{
 			"owner_id": user.ID().String(),
