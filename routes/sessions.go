@@ -11,6 +11,7 @@ import (
 	"github.com/elos/ehttp"
 	"github.com/elos/ehttp/serve"
 	"github.com/elos/models"
+	"github.com/elos/models/access"
 )
 
 const SessionIDParam = "session_id"
@@ -102,7 +103,7 @@ func SessionsPOST(c *serve.Conn, db services.DB) {
 		}
 	}
 
-	credential, err := models.Authenticate(db, credentials["public"], credentials["private"])
+	credential, err := access.Authenticate(db, credentials["public"], credentials["private"])
 
 	if err != nil {
 		log.Printf("Authentication failed: %s", err)

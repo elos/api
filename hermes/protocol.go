@@ -17,7 +17,7 @@ const (
 func Get(e *transfer.Envelope, db data.DB) error {
 	for kind, attrs := range e.Data {
 		m := models.ModelFor(kind)
-		r, _ := transfer.Unmarshal(attrs, m)
+		r, _ := transfer.UnmarshalAttrs(attrs, m)
 
 		if err := db.PopulateByID(m); err != nil {
 			return err
@@ -34,7 +34,7 @@ func Get(e *transfer.Envelope, db data.DB) error {
 func Post(e *transfer.Envelope, db data.DB) error {
 	for kind, attrs := range e.Data {
 		m := models.ModelFor(kind)
-		r, err := transfer.Unmarshal(attrs, m)
+		r, err := transfer.UnmarshalAttrs(attrs, m)
 		if err != nil {
 			return err
 		}
@@ -54,7 +54,7 @@ func Post(e *transfer.Envelope, db data.DB) error {
 func Delete(e *transfer.Envelope, db data.DB) error {
 	for kind, attrs := range e.Data {
 		m := models.ModelFor(kind)
-		r, err := transfer.Unmarshal(attrs, m)
+		r, err := transfer.UnmarshalAttrs(attrs, m)
 		if err != nil {
 			return err
 		}

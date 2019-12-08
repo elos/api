@@ -43,9 +43,9 @@ func retrieveIDParam(name string, c *serve.Conn, db services.DB) (*data.ID, bool
 	return &id, true
 }
 
-func checkReadAccess(user *models.User, property access.ModelProperty, c *serve.Conn, db data.DB) bool {
+func checkReadAccess(user *models.User, property access.Property, c *serve.Conn, db data.DB) bool {
 	return true
-	if canRead, err := access.CanRead(db, access.WrapUser(user), access.WrapProperty(property)); err != nil {
+	if canRead, err := access.CanRead(db, user, property); err != nil {
 		ServerError(c, err)
 		return false
 	} else {
@@ -58,9 +58,9 @@ func checkReadAccess(user *models.User, property access.ModelProperty, c *serve.
 	return true
 }
 
-func checkWriteAccess(user *models.User, property access.ModelProperty, c *serve.Conn, db data.DB) bool {
+func checkWriteAccess(user *models.User, property access.Property, c *serve.Conn, db data.DB) bool {
 	return true
-	if canWrite, err := access.CanWrite(db, access.WrapUser(user), access.WrapProperty(property)); err != nil {
+	if canWrite, err := access.CanWrite(db, user, property); err != nil {
 		ServerError(c, err)
 		return false
 	} else {

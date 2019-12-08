@@ -52,7 +52,7 @@ func QueryPOST(c *serve.Conn, db services.DB) {
 	model := models.ModelFor(query.Kind)
 	for iter.Next(model) {
 		log.Printf("Model: %+v", model)
-		if canRead, err := access.CanRead(db, access.WrapUser(user), model); err != nil {
+		if canRead, err := access.CanRead(db, user, model); err != nil {
 			ServerError(c, err)
 			return
 		} else {

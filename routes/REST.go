@@ -44,7 +44,7 @@ func GET(k data.Kind, c *serve.Conn, db services.DB) {
 		return
 	}
 
-	if !checkReadAccess(user, model.(access.ModelProperty), c, db) {
+	if !checkReadAccess(user, model.(access.Property), c, db) {
 		return
 	}
 
@@ -77,7 +77,7 @@ func POST(k data.Kind, c *serve.Conn, db services.DB) {
 		creation = true
 	}
 
-	if !creation && !checkWriteAccess(user, model.(access.ModelProperty), c, db) {
+	if !creation && !checkWriteAccess(user, model.(access.Property), c, db) {
 		return
 	}
 
@@ -113,7 +113,7 @@ func DELETE(k data.Kind, c *serve.Conn, db services.DB) {
 		return
 	}
 
-	if !checkWriteAccess(user, model.(access.ModelProperty), c, db) {
+	if !checkWriteAccess(user, model.(access.Property), c, db) {
 		return
 	}
 
